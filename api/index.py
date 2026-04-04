@@ -64,18 +64,18 @@ def _ensure_status_column():
         cursor.execute("""
             SELECT COUNT(*) FROM information_schema.COLUMNS
             WHERE TABLE_SCHEMA = DATABASE()
-              AND TABLE_NAME   = 'registrations'
+              AND TABLE_NAME   = 'participants'
               AND COLUMN_NAME  = 'status'
         """)
         (count,) = cursor.fetchone()
         if count == 0:
             cursor.execute("""
-                ALTER TABLE registrations
+                ALTER TABLE participants
                 ADD COLUMN status ENUM('pending','accepted','rejected')
                     NOT NULL DEFAULT 'pending'
             """)
             conn.commit()
-            print("status column added to registrations table.")
+            print("status column added to participants table.")
         cursor.close()
         conn.close()
     except Exception as exc:
@@ -130,7 +130,7 @@ def register():
     cursor = conn.cursor()
     try:
         cursor.execute("""
-            INSERT INTO registrations
+            INSERT INTO participants
                 (full_name, email, phone, registration_number, level, speciality, portfolio_link, status)
             VALUES (%s, %s, %s, %s, %s, %s, %s, 'pending')
         """, (
@@ -178,7 +178,7 @@ def get_registrations():
             SELECT
                 id, full_name, email, phone, registration_number,
                 level, speciality, portfolio_link, status, created_at
-            FROM registrations
+            FROM participants
             ORDER BY created_at DESC
         """)
         rows = cursor.fetchall()
@@ -204,12 +204,12 @@ def accept_registration():
     conn   = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM registrations WHERE id = %s", (reg_id,))
+        cursor.execute("SELECT * FROM participants WHERE id = %s", (reg_id,))
         reg = cursor.fetchone()
         if not reg:
             return jsonify({"error": "Registration not found"}), 404
 
-        cursor.execute("UPDATE registrations SET status = 'accepted' WHERE id = %s", (reg_id,))
+        cursor.execute("UPDATE participants SET status = 'accepted' WHERE id = %s", (reg_id,))
         conn.commit()
 
         html_body = get_registration_confirmation_html(reg["full_name"], "acceptance", reg)
@@ -236,12 +236,12 @@ def reject_registration():
     conn   = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM registrations WHERE id = %s", (reg_id,))
+        cursor.execute("SELECT * FROM participants WHERE id = %s", (reg_id,))
         reg = cursor.fetchone()
         if not reg:
             return jsonify({"error": "Registration not found"}), 404
 
-        cursor.execute("UPDATE registrations SET status = 'rejected' WHERE id = %s", (reg_id,))
+        cursor.execute("UPDATE participants SET status = 'rejected' WHERE id = %s", (reg_id,))
         conn.commit()
 
         html_body = get_registration_confirmation_html(reg["full_name"], "rejection", reg)
