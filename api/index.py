@@ -87,6 +87,10 @@ with app.app_context():
     except Exception as e:
         print(f"[startup] DB not available yet: {e}")
 
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "ok", "message": "Dashboard API is running"})
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
