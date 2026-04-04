@@ -1,7 +1,7 @@
 import json
 
 # Shared styling and layout components to keep the templates consistent and modern.
-_LOGO_URL = "https://test-brain.netlify.app/assets/club-logo.webp"
+_LOGO_URL = "https://brain-hack-dashboard.vercel.app/club-logo.webp"
 _BG_COLOR = "#000101"
 _CARD_BG = "#0a1628"
 _ACCENT = "#3ed2ff"
@@ -88,26 +88,30 @@ def get_registration_email_html(data: dict) -> str:
 
 def get_accepted_email_html(name: str) -> str:
     content = f"""
-    <div style="background-color:rgba(0,1,1,0.4);border:1px solid rgba(25,138,205,0.2);border-radius:16px;padding:24px;margin-bottom:24px;">
-        <h2 style="color:{_ACCENT};font-size:20px;margin-top:0;">Congratulations, {name}! 🎉</h2>
-        <p style="color:{_MUTED};line-height:1.7;">We're thrilled to confirm that your application to <strong>BrainHack</strong> has been <strong style="color:{_ACCENT};">accepted</strong>!</p>
-        <div style="background:#0c0c26;border-left:3px solid {_ACCENT};padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;color:{_TEXT_COLOR};">
-            📅 <strong>April 17–18, 2026</strong><br>Day 1 kicks off at 09:00. Full schedule will be shared closer to the event.
+    <div style="background-color:rgba(0,1,1,0.4);border:1px solid rgba(25,138,205,0.2);border-radius:16px;padding:24px;margin-bottom:24px;text-align:center;">
+        <h2 style="color:{_ACCENT};font-size:20px;margin-top:0;">Congratulations, {name}!</h2>
+        <div style="display:inline-block; padding: 12px 30px; margin: 15px 0; border: 1px solid rgba(34,197,94,0.6); background-color: rgba(34,197,94,0.15); border-radius: 12px; color: #22c55e; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">SELECTED</div>
+        <p style="color:{_MUTED};line-height:1.7;text-align:left;">We're thrilled to confirm that your application to <strong>BrainHack</strong> has been successful!</p>
+        <div style="background:#0c0c26;border-left:3px solid {_ACCENT};padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;color:{_TEXT_COLOR};text-align:left;">
+            <strong>Important Remarks:</strong><br>
+            • Bring your PC and charger with you.<br>
+            • We will see you Friday at 9 AM. Be there.
         </div>
-        <p style="color:{_MUTED};">Get ready to build, innovate, and compete. We'll send more details about the venue and logistics soon.</p>
+        <p style="color:{_MUTED};text-align:left;">Get ready to build, innovate, and compete. We'll send more details about the venue and logistics soon.</p>
     </div>
     """
-    return _wrap_html(content, "Application Accepted", f"Welcome to BrainHack 2026, {name}!")
+    return _wrap_html(content, "Application Selected", f"Welcome to BrainHack 2026, {name}!")
 
 def get_rejected_email_html(name: str) -> str:
     content = f"""
-    <div style="background-color:rgba(0,1,1,0.4);border:1px solid rgba(25,138,205,0.2);border-radius:16px;padding:24px;margin-bottom:24px;">
+    <div style="background-color:rgba(0,1,1,0.4);border:1px solid rgba(25,138,205,0.2);border-radius:16px;padding:24px;margin-bottom:24px;text-align:center;">
         <h2 style="color:{_RED_ACCENT};font-size:18px;margin-top:0;">Thank you for applying, {name}</h2>
-        <p style="color:{_MUTED};line-height:1.7;">After careful review, we regret to inform you that we're unable to accommodate your participation in <strong>BrainHack</strong> this time due to limited spots.</p>
-        <div style="background:#0c0c26;border-left:3px solid {_RED_ACCENT};padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;color:{_TEXT_COLOR};">
+        <div style="display:inline-block; padding: 12px 30px; margin: 15px 0; border: 1px solid rgba(239,68,68,0.6); background-color: rgba(239,68,68,0.15); border-radius: 12px; color: #ef4444; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">NOT SELECTED</div>
+        <p style="color:{_MUTED};line-height:1.7;text-align:left;">After careful review, we regret to inform you that we're unable to accommodate your participation in <strong>BrainHack</strong> this time due to limited spots.</p>
+        <div style="background:#0c0c26;border-left:3px solid {_RED_ACCENT};padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;color:{_TEXT_COLOR};text-align:left;">
             We truly appreciate your interest and encourage you to keep building and innovating.
         </div>
-        <p style="color:{_MUTED};">Future editions of BrainHack will be open for registration! Thank you for being part of the InfoBrain community.</p>
+        <p style="color:{_MUTED};text-align:left;">Future editions of BrainHack will be open for registration! Thank you for being part of the InfoBrain community.</p>
     </div>
     """
     return _wrap_html(content, "Application Update", f"Update regarding your registration.")
@@ -127,7 +131,7 @@ def get_registration_confirmation_text(name: str, email_type: str) -> str:
         return f"""
 Dear {name},
 
-Congratulations! Your application to BrainHack has been accepted.
+Congratulations! Your application to BrainHack has been selected.
 
 Event Details:
 - Date: April 17–18, 2026
