@@ -81,9 +81,46 @@ def _ensure_status_column():
     except Exception as exc:
         print(f"[startup] Could not ensure status column: {exc}")
 
+def _ensure_transport_columns():
+    """Add town_name and stop_station_name if missing (align with main registration API)."""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        specs = [
+            ("town_name", "speciality"),
+            ("stop_station_name", "town_name"),
+        ]
+        for col, after_col in specs:
+            cursor.execute(
+                """
+                SELECT COUNT(*) FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME   = 'participants'
+                  AND COLUMN_NAME  = %s
+                """,
+                (col,),
+            )
+            (count,) = cursor.fetchone()
+            if count == 0:
+                cursor.execute(
+                    f"""
+                    ALTER TABLE participants
+                    ADD COLUMN {col} VARCHAR(255) NOT NULL DEFAULT ''
+                    AFTER {after_col}
+                    """
+                )
+                conn.commit()
+                print(f"{col} column added to participants table.")
+        cursor.close()
+        conn.close()
+    except Exception as exc:
+        print(f"[startup] Could not ensure transport columns: {exc}")
+
+
 with app.app_context():
     try:
         _ensure_status_column()
+        _ensure_transport_columns()
     except Exception as e:
         print(f"[startup] DB not available yet: {e}")
 
@@ -177,7 +214,8 @@ def get_registrations():
         cursor.execute("""
             SELECT
                 id, full_name, email, phone, registration_number,
-                level, speciality, portfolio_link, status, created_at
+                level, speciality, town_name, stop_station_name,
+                portfolio_link, status, created_at
             FROM participants
             ORDER BY created_at DESC
         """)
